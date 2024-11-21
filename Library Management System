@@ -1,0 +1,134 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+struct Student {
+    string name;
+    int age;
+    string regNo;
+    float marks[3]; // Array to store marks for 3 subjects
+    float averageMarks;
+};
+
+void inputStudentDetails(Student& student) {
+    cout << "Enter name: ";
+    cin >> student.name;
+    cout << "Enter age: ";
+    cin >> student.age;
+    cout << "Enter Registration Number: ";
+    cin >> student.regNo;
+
+    float totalMarks = 0;
+    for (int i = 0; i < 3; i++) {
+        cout << "Enter marks for subject " << (i + 1) << ": ";
+        cin >> student.marks[i];
+        totalMarks += student.marks[i];
+    }
+    student.averageMarks = totalMarks / 3; // Calculate average
+}
+
+void displayStudentDetails(const Student& student) {
+    cout << "Name: " << student.name << ", Age: " << student.age 
+         << ", Reg No: " << student.regNo << ", Average Marks: " 
+         << fixed << setprecision(2) << student.averageMarks << endl;
+}
+
+void sortStudentsByAverageMarks(Student students[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (students[j].averageMarks > students[j + 1].averageMarks) {
+                swap(students[j], students[j + 1]);
+            }
+        }
+    }
+}
+
+void findHighestLowestStudents(const Student students[], int size) {
+    float highest = students[0].averageMarks;
+    float lowest = students[0].averageMarks;
+    Student highestStudent = students[0];
+    Student lowestStudent = students[0];
+
+    for (int i = 1; i < size; i++) {
+        if (students[i].averageMarks > highest) {
+            highest = students[i].averageMarks;
+            highestStudent = students[i];
+        }
+        if (students[i].averageMarks < lowest) {
+            lowest = students[i].averageMarks;
+            lowestStudent = students[i];
+        }
+    }
+
+    cout << "Student with highest average marks: ";
+    displayStudentDetails(highestStudent);
+    cout << "Student with lowest average marks: ";
+    displayStudentDetails(lowestStudent);
+}
+
+float calculateClassAverage(const Student students[], int size) {
+    float total = 0;
+    for (int i = 0; i < size; i++) {
+        total += students[i].averageMarks;
+    }
+    return total / size;
+}
+
+int main() {
+    const int maxStudents = 100; // Maximum number of students
+    Student students[maxStudents];
+    int studentCount = 0;
+
+    while (true) {
+        cout << "\nMenu:\n";
+        cout << "1. Add new student record\n";
+        cout << "2. Display all student records\n";
+        cout << "3. Sort students by average marks\n";
+        cout << "4. Find highest and lowest average marks\n";
+        cout << "5. Calculate class average\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                if (studentCount < maxStudents) {
+                    inputStudentDetails(students[studentCount]);
+                    studentCount++;
+                } else {
+                    cout << "Cannot add more students. Maximum limit reached.\n";
+                }
+                break;
+            case 2:
+                for (int i = 0; i < studentCount; i++) {
+                    displayStudentDetails(students[i]);
+                }
+                break;
+            case 3:
+                sortStudentsByAverageMarks(students, studentCount);
+                cout << "Students sorted by average marks.\n";
+                break;
+            case 4:
+                findHighestLowestStudents(students, studentCount);
+                break;
+            case 5:
+                if (studentCount > 0) {
+                    float classAverage = calculateClassAverage(students, studentCount);
+                    cout << "Class average marks: " << fixed << setprecision(2) << classAverage << endl;
+                } else {
+                    cout << "No students to calculate average.\n";
+                }
+                break;
+            case 6:
+                cout << "Exiting program.\n";
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
